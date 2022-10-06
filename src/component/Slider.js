@@ -1,7 +1,53 @@
-import data from "../data";
+import React from 'react';
+import {useRef, useState, useEffect} from 'react';
 
-function Slider({dataSlider, slideRef, slideCount, setSlideCount, handleSlider }){
+import data2 from './../data2';
+
+
+
+// {dataSlider, slideRef, slideCount, setSlideCount, handleSlider }
+function Slider(){
   
+  //캐로셀
+  let slideRef = useRef();
+  let [dataSlider, setDataSlider] = useState(data2);
+  let [slideCount, setSlideCount] = useState(1)
+
+  const handleSlider = slideCount =>{
+    if(slideCount === 4){
+      slideRef.current.style.transform = 'translateX(0)';
+    }else{
+      slideRef.current.style.transform = `translateX( -${25 * slideCount}%)`;
+    }
+  };
+
+  const interval = ()=> {
+    setTimeout(()=>{
+      setSlideCount(()=>{
+        if(slideCount < dataSlider.length){
+          setSlideCount(slideCount + 1);
+        }else{
+          setSlideCount(1);
+        }
+      });
+      handleSlider(slideCount); 
+  }, 4000)};
+
+
+  useEffect(()=>{
+    //캐로셀 4초마다 동작
+    interval()
+    //클리어
+    return()=> {
+      clearTimeout(interval);
+    } 
+  },[slideCount]);
+
+  useEffect(()=>{
+    window.addEventListener('resize', handleSlider())
+  })
+
+
   return(
     <div className="sliderOuter">
       <ul className="sliderContainer" ref={slideRef}>
